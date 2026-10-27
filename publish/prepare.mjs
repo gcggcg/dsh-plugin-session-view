@@ -284,6 +284,7 @@ const packageJson = {
   private: false,
   description: 'Session plugins, MCP servers and skills panel for DeepSeek Harness: a top-right header popover with per-item enable switches and session plugin usage.',
   type: 'module',
+  main: 'index.js',
   license,
   ...(author ? { author } : {}),
   ...(repo ? { repository: { type: 'git', url: `git+${repo}.git` }, homepage: `${repo}#readme`, bugs: { url: `${repo}/issues` } } : {}),

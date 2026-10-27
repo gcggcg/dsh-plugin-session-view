@@ -5,6 +5,7 @@
   "description": "Session plugin, MCP server and skill panel for the DeepSeek Harness Web conversation view.",
   "license": "MIT",
   "type": "module",
+  "main": "index.js",
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",

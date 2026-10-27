@@ -113,6 +113,22 @@ npm view dsh-plugin-session-view version   # 确认已发布
 - 「简短说明」一句话说明用途（中英文均可）；
 - 「补充信息」可选：Logo、截图、实测说明。
 
+可直接粘贴的申请内容：
+
+```text
+插件地址 / Plugin link:
+dsh-plugin-session-view
+（https://github.com/gcggcg/dsh-plugin-session-view）
+
+简短说明 / Summary:
+会话级插件/MCP/技能面板：在会话标题栏右上角查看当前会话的插件、MCP 服务与技能，并可逐行启停 MCP 服务与插件包。
+A top-right conversation-header panel listing the session's plugins, MCP servers and skills, with per-row enable switches for MCP servers and plugin bundles.
+
+补充信息 / Additional details:
+仓库 https://github.com/gcggcg/dsh-plugin-session-view · 许可证 MIT
+分类：界面 / interface · 截图：仓库 docs/session-panel-*.png
+```
+
 收录条件（见 [CONTRIBUTING](https://github.com/polang233/dsh-plugin-index/blob/main/.github/CONTRIBUTING.md)）：
 
 - 有公开的 npm 版本与发布时间；

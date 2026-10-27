@@ -1,0 +1,14 @@
+# Build artifacts: `npm run prepare` regenerates these from the plugin sources.
+publish/dist/npm/
+
+# The generated market directory may be committed when this repo also hosts the
+# market (e.g. GitHub Pages serves publish/dist/market/index.json). Ignore it
+# instead if you host the index in a separate repository:
+# publish/dist/market/
+
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/

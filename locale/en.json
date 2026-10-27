@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Session Plugin View",
+    "description": "Shows the plugins mounted in the current session with their capabilities, plus the available MCP servers and skills."
+  }
+}

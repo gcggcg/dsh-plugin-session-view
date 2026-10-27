@@ -1,0 +1,6 @@
+# Keep line endings stable across platforms (the sources are written with LF).
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.webp binary

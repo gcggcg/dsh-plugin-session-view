@@ -1,0 +1,82 @@
+{
+  "format": 1,
+  "title": {
+    "en": "My DSH Plugins",
+    "zh": "我的 DSH 插件源"
+  },
+  "description": {
+    "en": "DSH plugins published from this repository.",
+    "zh": "来自本仓库的 DSH 插件。"
+  },
+  "metadata": {
+    "categories": {
+      "interface": {
+        "title": {
+          "en": "Interface",
+          "zh": "界面"
+        }
+      },
+      "tools": {
+        "title": {
+          "en": "Tools",
+          "zh": "工具"
+        }
+      },
+      "appearance": {
+        "title": {
+          "en": "Appearance",
+          "zh": "外观"
+        }
+      }
+    },
+    "labels": {},
+    "sortKeys": {}
+  },
+  "plugins": [
+    {
+      "name": "dsh-plugin-session-view",
+      "title": {
+        "en": "Session Plugin View",
+        "zh": "会话插件与能力"
+      },
+      "description": {
+        "en": "List the plugins, MCP servers and skills of the current session from the conversation header, with enable switches for MCP servers and plugin bundles.",
+        "zh": "从会话标题栏查看当前会话的插件、MCP 服务与技能，并可直接开关 MCP 服务与插件包。"
+      },
+      "icon": "icons/dsh-plugin-session-view.svg",
+      "author": "gcggcg",
+      "homepage": "https://github.com/gcggcg/dsh-plugin-session-view#readme",
+      "repository": {
+        "url": "https://github.com/gcggcg/dsh-plugin-session-view"
+      },
+      "metadata": {
+        "category": "interface",
+        "keywords": [
+          "dsh",
+          "deepseek-harness",
+          "dsh-plugin",
+          "session",
+          "plugins",
+          "mcp",
+          "skills",
+          "ui"
+        ],
+        "labels": [],
+        "sortKeys": {}
+      },
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1793084487,
+          "source": {
+            "type": "npm",
+            "registry": "https://registry.npmjs.org/"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.3 <0.3.0-0"
+          }
+        }
+      ]
+    }
+  ]
+}

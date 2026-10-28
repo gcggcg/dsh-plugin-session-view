@@ -6,7 +6,7 @@
  * per-session skill catalog through `skills/list`. This half therefore owns no
  * Host state; it exists so the bundle resolves as one Loader row.
  *
- * @module @local/session-plugin-view
+ * @module dsh-plugin-session-view
  */
 
 /** No Host-side resources are owned by this bundle. */

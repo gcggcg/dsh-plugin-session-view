@@ -36,12 +36,10 @@ node ../../prepare.mjs --dry-run   # 再生成一次也行，内建 index 校验
 
 `npm` 包名是全局唯一的：本机查询 `dsh-plugin-session-view` 在 npm 上仍为 404（可用）。若被占用，改 `--name`，或使用带 scope 的名字（如 `@你的账号/dsh-plugin-session-view`，`npm publish --access public`）。
 
-> **仓库根目录的 package.json 仍是开发用清单**（`@local/session-plugin-view` + `private`），
-> 因为本机 profile 以 `link:` 方式依赖这个名字。若你希望公开仓库根目录本身就是标准 npm 包
-> （更符合常规习惯），把 `publish/dist/npm/package.json` 覆盖到根目录，并把 profile 里
-> `"@local/session-plugin-view": "link:…"` 与 `dsh.profile.bundles` 中的名字同步改成
-> `dsh-plugin-session-view` 后重新 `pnpm install`；两种做法都能通过 dshopen 的检查（它检查的是
-> 已发布 npm 归档，而不是仓库根清单）。
+> **仓库根目录的 package.json 现在直接使用发布包名** `dsh-plugin-session-view`（仍是 `private: true`），
+> 这样 `link:` 开发安装与 npm 安装共用同一个名字、同一个 loader id。客户端模块 id 必须等于包名
+> （`client.js` 里的 `window.__ModuleLoader__.load({ id })`），`prepare.mjs` 在发布时会同步改写；
+> 两者不一致时脚本能加载但注册失败，插件会显示「已安装 / 已启用」却没有任何按钮出现。
 
 ---
 
@@ -290,10 +288,11 @@ cd ../.. && node publish/prepare.mjs --name dsh-plugin-session-view --author "�
 ## 本插件发布时的注意事项
 
 - **先移除/停用本机的 `link:` 版本**：开发时 profile 里会挂着
-  `"@local/session-plugin-view": "link:<本仓库绝对路径>"`，发布版补丁同样插入
+  `"dsh-plugin-session-view": "link:<本仓库绝对路径>"`，发布版补丁同样插入
   `id: session-plugin-view`。两者同时存在会出现重复条目；换成 npm 版前先在
-  「插件」页停用或移除 `@local/session-plugin-view`。
-- **npm 包名与补丁 `name` 必须一致**：`prepare.mjs` 会同步改写；手工改名时别忘了 `cordis.patch.yml`。
+  「插件」页停用或移除该 link 安装。
+- **npm 包名、补丁 `name` 与 `client.js` 的模块 id 必须一致**：`prepare.mjs` 会在发布时同步改写补丁
+  `name` 与客户端模块 id；手工改名时三处都要改，否则浏览器端模块不会注册，面板图标不会出现。
 - **`engines.dsh`**：默认 `>=0.2.1-rc.3 <0.3.0-0`（本机运行 0.2.1-rc.3）。范围写错会被 DSH 判为不兼容并拒绝安装，
   可用 `plugin_manager` 的版本豁免临时放行。
 - **图标**：dshopen 会从发布包的 `icon` 字段或导出的 `./icon` 读取（≤256 KiB，SVG/PNG/JPEG/WebP）；
@@ -301,7 +300,7 @@ cd ../.. && node publish/prepare.mjs --name dsh-plugin-session-view --author "�
 - **发布前跑一次真实安装**（建议新开一个空 profile，避免污染桌面 profile）：
 
   ```bash
-  dsh plugin --profile market-test add file:./publish/dist/npm/dsh-plugin-session-view-1.0.0.tgz
+  dsh plugin --profile market-test add file:./publish/dist/npm/dsh-plugin-session-view-1.0.1.tgz
   ```
 
   需要本机有 `dsh` 命令行（桌面安装默认不一定在 PATH；也可在已装 DSH 的插件页用「从文件安装」）。

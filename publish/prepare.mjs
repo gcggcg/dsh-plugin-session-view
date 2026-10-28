@@ -269,6 +269,25 @@ await mkdir(NPM_DIR, { recursive: true });
 for (const file of ['index.js', 'client.js', 'icon.svg']) await cp(join(PLUGIN_DIR, file), join(NPM_DIR, file));
 await cp(join(PLUGIN_DIR, 'locale'), join(NPM_DIR, 'locale'), { recursive: true });
 
+// The client bundle declares its module-loader id, and the browser loader
+// resolves a bundle by its package name: a mismatch means the script loads but
+// never registers, so the Host row looks enabled while nothing renders. Keep
+// that id in sync with `--name` so a rename can never ship a dead client half.
+const clientPath = join(NPM_DIR, 'client.js');
+const clientSource = await readFile(clientPath, 'utf8');
+const loaderCall = 'window.__ModuleLoader__.load({';
+const callIndex = clientSource.indexOf(loaderCall);
+if (callIndex === -1) throw new Error(`client.js: 找不到 ${loaderCall} 声明，无法校验模块 id`);
+const idPattern = /(^[ \t]*id:[ \t]*')([^']+)(')/mu;
+const clientTail = clientSource.slice(callIndex);
+const loaderId = idPattern.exec(clientTail);
+if (loaderId === null) throw new Error('client.js: 模块加载声明中没有 id 字段，无法校验模块 id');
+if (loaderId[2] !== name) {
+  const rewrittenTail = clientTail.replace(idPattern, (_, before, _old, after) => `${before}${name}${after}`);
+  await writeFile(clientPath, clientSource.slice(0, callIndex) + rewrittenTail);
+  warnings.push(`client.js 的模块 id 已从 ${loaderId[2]} 改写为 ${name}`);
+}
+
 const patchSource = await readFile(join(PLUGIN_DIR, 'cordis.patch.yml'), 'utf8');
 const patch = patchSource.replace(
   /(^\s*name:\s*['"]?)([^'"\n]+)(['"]?\s*$)/mu,

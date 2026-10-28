@@ -1,6 +1,6 @@
 {
-  "name": "@local/session-plugin-view",
-  "version": "1.0.0",
+  "name": "dsh-plugin-session-view",
+  "version": "1.0.1",
   "private": true,
   "description": "Session plugin, MCP server and skill panel for the DeepSeek Harness Web conversation view.",
   "license": "MIT",

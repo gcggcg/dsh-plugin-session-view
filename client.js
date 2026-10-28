@@ -1,5 +1,8 @@
 window.__ModuleLoader__.load({
-  id: '@local/session-plugin-view',
+  // Must equal the npm package name: the client module loader resolves the
+  // bundle by the package name of the loader row and rejects a script that
+  // registers any other id.
+  id: 'dsh-plugin-session-view',
   factory(require) {
     const React = require('react');
     const ReactDOM = require('react-dom');
@@ -895,10 +898,10 @@ window.__ModuleLoader__.load({
 
       ctx.effect(() => {
         if (typeof document === 'undefined') return () => {};
-        const styleId = '@local/session-plugin-view/styles';
+        const styleId = 'session-plugin-view/styles';
         if (document.querySelector(`style[data-plugin-css="${styleId}"]`) !== null) return () => {};
         const tag = document.createElement('style');
-        tag.dataset.plugin = '@local/session-plugin-view';
+        tag.dataset.plugin = 'session-plugin-view';
         tag.dataset.pluginCss = styleId;
         tag.textContent = CSS;
         document.head.appendChild(tag);

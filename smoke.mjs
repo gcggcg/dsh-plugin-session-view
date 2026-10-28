@@ -1,4 +1,4 @@
-// Headless smoke harness for @local/session-plugin-view/client.js
+// Headless smoke harness for dsh-plugin-session-view/client.js
 // Runs the browser bundle with a stub module loader, stub React, and stub Cordis
 // context, then exercises apply(), the header-utilities registration, the data
 // loader, the toggle actions, and every render branch.
@@ -22,7 +22,8 @@ vm.createContext(sandbox);
 vm.runInContext(source, sandbox, { filename: 'client.js' });
 
 assert.ok(captured, 'bundle called __ModuleLoader__.load');
-assert.equal(captured.id, '@local/session-plugin-view', 'module id matches package name');
+const manifest = JSON.parse(fs.readFileSync(fileURLToPath(new URL('./package.json', import.meta.url)), 'utf8'));
+assert.equal(captured.id, manifest.name, 'client module id equals the package name (the loader resolves bundles by package name)');
 
 // ---- React stub: enough to call components outside a renderer --------------
 function createReact() {
@@ -123,7 +124,7 @@ for (const effect of styleEffects) effect();
 globalThis.document = previousGlobal;
 delete sandbox.document;
 assert.equal(appended.length, 1, 'one stylesheet tag appended');
-assert.equal(appended[0].dataset.plugin, '@local/session-plugin-view');
+assert.equal(appended[0].dataset.plugin, 'session-plugin-view');
 assert.ok(appended[0].textContent.includes('.spv-trigger'), 'stylesheet carries the trigger rules');
 assert.ok(appended[0].textContent.includes('.spv-panel'), 'stylesheet carries the popover rules');
 assert.ok(appended[0].textContent.includes('.spv-switch'), 'stylesheet carries the switch rules');

@@ -1,8 +1,8 @@
 {
   "name": "dsh-plugin-session-view",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
-  "description": "Session plugin, MCP server and skill panel for the DeepSeek Harness Web conversation view.",
+  "description": "Session plugin, MCP server and skill panel for the DeepSeek Harness Web conversation view, with a one-click GitHub star shortcut.",
   "license": "MIT",
   "type": "module",
   "main": "index.js",

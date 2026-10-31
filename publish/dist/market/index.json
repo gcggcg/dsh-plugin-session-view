@@ -40,8 +40,8 @@
         "zh": "会话插件与能力"
       },
       "description": {
-        "en": "List the plugins, MCP servers and skills of the current session from the conversation header, with enable switches for MCP servers and plugin bundles.",
-        "zh": "从会话标题栏查看当前会话的插件、MCP 服务与技能，并可直接开关 MCP 服务与插件包。"
+        "en": "List the plugins, MCP servers and skills of the current session from the conversation header, with enable switches and a GitHub star shortcut.",
+        "zh": "从会话标题栏查看当前会话的插件、MCP 服务与技能，可直接开关，并用红心按钮一键前往 GitHub 点 Star。"
       },
       "icon": "icons/dsh-plugin-session-view.svg",
       "author": "gcggcg",
@@ -66,8 +66,8 @@
       },
       "versions": [
         {
-          "version": "1.0.1",
-          "publishTimestamp": 1793174463,
+          "version": "1.1.0",
+          "publishTimestamp": 1793455395,
           "source": {
             "type": "npm",
             "registry": "https://registry.npmjs.org/"

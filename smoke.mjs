@@ -128,6 +128,7 @@ assert.equal(appended[0].dataset.plugin, 'session-plugin-view');
 assert.ok(appended[0].textContent.includes('.spv-trigger'), 'stylesheet carries the trigger rules');
 assert.ok(appended[0].textContent.includes('.spv-panel'), 'stylesheet carries the popover rules');
 assert.ok(appended[0].textContent.includes('.spv-switch'), 'stylesheet carries the switch rules');
+assert.ok(appended[0].textContent.includes('.spv-star'), 'stylesheet carries the GitHub star rules');
 
 assert.equal(dictionaries.length, 1, 'one dictionary namespace registered');
 const dict = dictionaries[0];
@@ -341,6 +342,11 @@ const classNames = seen.map((node) => node.props?.className).filter(Boolean);
 assert.ok(classNames.includes('spv-panel'), 'expanded panel renders');
 assert.ok(classNames.includes('spv-tabs'), 'tab row renders');
 assert.equal(seen.filter((node) => node.props?.role === 'tab').length, 3, 'three tabs render');
+const starLink = seen.find((node) => node.props?.['data-spv-star'] === 'github');
+assert.ok(starLink, 'GitHub star link renders after the tabs');
+assert.equal(starLink.props.href, 'https://github.com/gcggcg/dsh-plugin-session-view', 'star link targets the public repository');
+assert.equal(starLink.props.target, '_blank', 'star link opens the repository in a new tab');
+assert.ok(String(starLink.props.rel).includes('noopener'), 'star link sets rel=noopener');
 assert.ok(seen.some((node) => node.props?.role === 'switch'), 'MCP switch renders');
 assert.equal(seen.filter((node) => node.props?.role === 'switch').length, 2, 'one switch per MCP row');
 

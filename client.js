@@ -17,6 +17,9 @@ window.__ModuleLoader__.load({
       tabMcp: 'MCP',
       tabSkills: '技能',
       tabPlugins: '插件',
+      starTip: '喜欢这个插件？在 GitHub 上点个 Star 支持作者',
+      starAction: 'Star',
+      starCount: 'GitHub Star 数 {count}',
       refresh: '刷新',
       loading: '读取中…',
       error: '暂时无法读取插件信息',
@@ -56,6 +59,9 @@ window.__ModuleLoader__.load({
       tabMcp: 'MCP',
       tabSkills: 'Skills',
       tabPlugins: 'Plugins',
+      starTip: 'Like this plugin? Star it on GitHub to support the author',
+      starAction: 'Star',
+      starCount: 'GitHub stars: {count}',
       refresh: 'Refresh',
       loading: 'Reading…',
       error: 'Plugins are temporarily unavailable',
@@ -104,6 +110,14 @@ window.__ModuleLoader__.load({
       '.spv-tab:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:-2px}',
       '.spv-tabCount{font-size:12px;font-weight:600}',
       '.spv-tabFiller{flex:1 1 auto}',
+      '.spv-star{display:inline-flex;flex:none;align-items:center;gap:4px;height:24px;margin-left:4px;padding:0 6px;border:none;border-radius:999px;background:transparent;color:var(--dsw-alias-state-error-primary,#e5484d);font:inherit;font-size:11px;line-height:16px;text-decoration:none;cursor:pointer}',
+      '.spv-star:hover{background:var(--dsw-alias-bg-layer-2)}',
+      '.spv-star:hover svg path{fill:currentColor}',
+      '.spv-star:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:1px}',
+      '.spv-star svg{transition:transform .15s ease}',
+      '.spv-star:active svg{transform:scale(.88)}',
+      '.spv-starLabel{font-weight:600;font-size:11px;line-height:16px}',
+      '.spv-starCount{color:var(--dsw-alias-label-tertiary);font-variant-numeric:tabular-nums}',
       '.spv-iconButton{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;border:none;border-radius:6px;background:transparent;color:var(--dsw-alias-label-tertiary);font:inherit;cursor:pointer}',
       '.spv-iconButton:hover{background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary)}',
       '.spv-iconButton:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:1px}',
@@ -148,6 +162,19 @@ window.__ModuleLoader__.load({
 
     /** Maximum rows the panel keeps rendering for one section before it truncates. */
     const ROW_LIMIT = 200;
+
+    /** Public repository users land on when they star the plugin from the panel. */
+    const REPO_URL = 'https://github.com/gcggcg/dsh-plugin-session-view';
+
+    /** Anonymous GitHub API endpoint used only to show the live star count. */
+    const STAR_API_URL = 'https://api.github.com/repos/gcggcg/dsh-plugin-session-view';
+
+    /** Cached badge endpoint used when the anonymous GitHub API is rate limited. */
+    const STAR_BADGE_URL = 'https://img.shields.io/github/stars/gcggcg/dsh-plugin-session-view.json';
+
+    /** Star count cache: one anonymous request per half hour instead of per panel open. */
+    const STAR_CACHE_KEY = 'dsh-plugin-session-view:stars';
+    const STAR_CACHE_TTL = 30 * 60 * 1000;
 
     /** Strip the composition-only `include:` marker from a Loader entry id. */
     function cleanEntryId(entryId) {
@@ -448,6 +475,126 @@ window.__ModuleLoader__.load({
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
         }),
+      );
+    }
+
+    /** Read the cached GitHub star count, or undefined when missing/expired. */
+    function readStarCache() {
+      try {
+        if (typeof window === 'undefined' || window.localStorage === undefined) return undefined;
+        const raw = window.localStorage.getItem(STAR_CACHE_KEY);
+        if (typeof raw !== 'string') return undefined;
+        const cached = JSON.parse(raw);
+        if (cached === null || typeof cached !== 'object') return undefined;
+        if (typeof cached.at !== 'number' || Date.now() - cached.at > STAR_CACHE_TTL) return undefined;
+        return typeof cached.count === 'number' && Number.isFinite(cached.count) ? cached.count : undefined;
+      } catch {
+        return undefined;
+      }
+    }
+
+    /** Persist the star count so reopening the panel does not spend API quota. */
+    function writeStarCache(count) {
+      try {
+        if (typeof window === 'undefined' || window.localStorage === undefined) return;
+        window.localStorage.setItem(STAR_CACHE_KEY, JSON.stringify({ count, at: Date.now() }));
+      } catch {
+        // Private mode or a blocked storage partition: the count is optional.
+      }
+    }
+
+    /** Normalize a GitHub API or shields.io payload to a star count. */
+    function starCountOf(data) {
+      if (data === null || typeof data !== 'object') return undefined;
+      const direct = data.stargazers_count;
+      if (typeof direct === 'number' && Number.isFinite(direct) && direct >= 0) return direct;
+      const message = data.message;
+      if (typeof message !== 'string') return undefined;
+      const parsed = /^(\d+(?:\.\d+)?)([kKmM])?$/u.exec(message.trim());
+      if (parsed === null) return undefined;
+      const multiplier = parsed[2] === undefined ? 1 : parsed[2].toLowerCase() === 'k' ? 1000 : 1000000;
+      return Math.round(Number(parsed[1]) * multiplier);
+    }
+
+    /** Heart glyph for the GitHub star link. */
+    function HeartIcon() {
+      return h(
+        'svg',
+        { viewBox: '0 0 16 16', width: 14, height: 14, 'aria-hidden': 'true', style: { display: 'block' } },
+        h('path', {
+          d: 'M8 13.4 3.1 8.55a3.15 3.15 0 0 1 0-4.5 3.1 3.1 0 0 1 4.4 0l.5.5.5-.5a3.1 3.1 0 0 1 4.4 0 3.15 3.15 0 0 1 0 4.5Z',
+          fill: 'none',
+          stroke: 'currentColor',
+          strokeWidth: 1.3,
+          strokeLinejoin: 'round',
+        }),
+      );
+    }
+
+    /**
+     * Red-heart GitHub star link shown right after the three tabs.
+     *
+     * GitHub only accepts a star from the repository page (or an authenticated
+     * API call), so the link opens the public repository where the Star button
+     * lives. The live count is fetched anonymously and cached for half an hour;
+     * when GitHub is unreachable the button still works and simply hides the number.
+     */
+    function StarButton({ t }) {
+      const [stars, setStars] = React.useState(undefined);
+
+      React.useEffect(() => {
+        const cached = readStarCache();
+        if (cached !== undefined) {
+          setStars(cached);
+          return undefined;
+        }
+        if (typeof fetch !== 'function') return undefined;
+        let live = true;
+        const controller = typeof AbortController === 'function' ? new AbortController() : undefined;
+        const signal = controller === undefined ? undefined : controller.signal;
+        const applyCount = (data) => {
+          const count = starCountOf(data);
+          if (count === undefined) return false;
+          setStars(count);
+          writeStarCache(count);
+          return true;
+        };
+        const readFrom = (url, accept) =>
+          fetch(url, { headers: { accept }, signal })
+            .then((response) => (response.ok ? response.json() : undefined))
+            .then((data) => (live ? applyCount(data) : false))
+            .catch(() => false);
+        readFrom(STAR_API_URL, 'application/vnd.github+json').then((applied) => {
+          if (applied || !live) return undefined;
+          // The anonymous API is rate limited per IP; the cached shields.io
+          // badge reports the same count without spending that quota.
+          return readFrom(STAR_BADGE_URL, 'application/json');
+        });
+        return () => {
+          live = false;
+          if (controller !== undefined) controller.abort();
+        };
+      }, []);
+
+      const title =
+        stars === undefined
+          ? t('starTip')
+          : `${t('starTip')} · ${t('starCount', { count: String(stars) })}`;
+
+      return h(
+        'a',
+        {
+          className: 'spv-star',
+          href: REPO_URL,
+          target: '_blank',
+          rel: 'noopener noreferrer',
+          title,
+          'aria-label': title,
+          'data-spv-star': 'github',
+        },
+        h(HeartIcon, { key: 'heart' }),
+        h('span', { key: 'label', className: 'spv-starLabel' }, t('starAction')),
+        stars === undefined ? null : h('span', { key: 'count', className: 'spv-starCount' }, String(stars)),
       );
     }
 
@@ -830,6 +977,7 @@ window.__ModuleLoader__.load({
               [
                 h('div', { key: 'tabs', className: 'spv-tabs', role: 'tablist' }, [
                   ...tabs.map((entry) => h(Tab, { key: entry.id, tab: entry, active: entry.id === activeTab, onSelect: setTab })),
+                  h(StarButton, { key: 'star', t }),
                   h('span', { key: 'filler', className: 'spv-tabFiller' }),
                   h(
                     'button',

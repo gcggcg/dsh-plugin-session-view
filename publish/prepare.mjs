@@ -196,6 +196,7 @@ const readme = `# 会话插件与能力 · Session Plugin View
 - **MCP**：列出 profile 里配置的 MCP 服务（\`@deepseek-ai/dsh-mcp-client\` 条目），逐行开关，立即生效。
 - **技能 / Skills**：列出当前会话可用技能及其说明、是否仅供手动调用。
 - **插件 / Plugins**：「已安装插件包」可整体启停；「当前会话插件」显示预设组成的挂载状态（已挂载 / 条件启用 / 启动失败 / 已停用）。
+- **GitHub Star**：标签栏「MCP / 技能 / 插件」后的红心按钮显示实时 Star 数，点击直接打开仓库，在 GitHub 上点 Star 支持作者。
 - 面板挂到 \`document.body\`，点击外部或 Esc 关闭；只读行会说明不能修改的原因。
 
 ## 截图 / Screenshots
@@ -301,7 +302,7 @@ const packageJson = {
   name,
   version,
   private: false,
-  description: 'Session plugins, MCP servers and skills panel for DeepSeek Harness: a top-right header popover with per-item enable switches and session plugin usage.',
+  description: 'Session plugins, MCP servers and skills panel for DeepSeek Harness: a top-right header popover with per-item enable switches, session plugin usage, and a one-click GitHub star shortcut.',
   type: 'module',
   main: 'index.js',
   license,
@@ -339,8 +340,8 @@ const index = {
       name,
       title: { en: 'Session Plugin View', zh: '会话插件与能力' },
       description: {
-        en: 'List the plugins, MCP servers and skills of the current session from the conversation header, with enable switches for MCP servers and plugin bundles.',
-        zh: '从会话标题栏查看当前会话的插件、MCP 服务与技能，并可直接开关 MCP 服务与插件包。',
+        en: 'List the plugins, MCP servers and skills of the current session from the conversation header, with enable switches and a GitHub star shortcut.',
+        zh: '从会话标题栏查看当前会话的插件、MCP 服务与技能，可直接开关，并用红心按钮一键前往 GitHub 点 Star。',
       },
       icon: `icons/${iconFile}`,
       ...(author ? { author } : {}),

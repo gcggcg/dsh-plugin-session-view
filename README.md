@@ -9,6 +9,7 @@ A session-scoped plugin, MCP and skills panel for DeepSeek Harness, opened from 
 - **MCP**：列出 profile 中配置的 MCP 服务（`@deepseek-ai/dsh-mcp-client` 条目），逐行开关，立即生效。
 - **技能**：当前会话可用技能、说明与「仅手动」标记。
 - **插件**：已安装插件包可整体启停；当前会话插件显示挂载状态（已挂载 / 条件启用 / 启动失败 / 已停用）。
+- **Star 支持作者**：标签栏「MCP / 技能 / 插件」后有一个红心按钮，显示 GitHub 实时 Star 数；点击直接打开本仓库，在 GitHub 上点 Star 即可支持插件持续更新。
 - 面板 portal 到 `document.body`，点击外部或 Esc 关闭；只读行会说明不能修改的原因。
 
 ## 截图

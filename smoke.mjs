@@ -344,6 +344,10 @@ assert.ok(classNames.includes('spv-tabs'), 'tab row renders');
 assert.equal(seen.filter((node) => node.props?.role === 'tab').length, 3, 'three tabs render');
 const starLink = seen.find((node) => node.props?.['data-spv-star'] === 'github');
 assert.ok(starLink, 'GitHub star link renders after the tabs');
+assert.ok(
+  seen.indexOf(starLink) > seen.indexOf(seen.filter((node) => node.props?.role === 'tab').at(-1)),
+  'GitHub star link follows the last tab',
+);
 assert.equal(starLink.props.href, 'https://github.com/gcggcg/dsh-plugin-session-view', 'star link targets the public repository');
 assert.equal(starLink.props.target, '_blank', 'star link opens the repository in a new tab');
 assert.ok(String(starLink.props.rel).includes('noopener'), 'star link sets rel=noopener');
